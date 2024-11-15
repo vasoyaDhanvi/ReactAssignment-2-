@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toggle Visibility</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <style>
+        #toggleDiv {
+            width: 300px;
+            height: 200px;
+            background-color: lightblue;
+            display: none; /* Start hidden */
+            text-align: center;
+            line-height: 200px;
+            font-size: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+    <button id="toggleButton">Show/Hide Div</button>
+    <div id="toggleDiv">This is a toggleable div!</div>
+
+    <script>
+        $(document).ready(function() {
+            $('#toggleButton').click(function() {
+                $('#toggleDiv').toggle(); // Toggles the visibility of the div
+            });
+        });
+    </script>
+
+</body>
+</html>

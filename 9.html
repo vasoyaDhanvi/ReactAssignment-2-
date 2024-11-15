@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Load More Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .list-item {
+            padding: 15px;
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #loadMoreBtn {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+        }
+
+        #loadMoreBtn:hover {
+            background-color: #0056b3;
+        }
+
+        #loading {
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Content List</h1>
+        <div id="contentList">
+            <!-- Content will be dynamically loaded here -->
+        </div>
+        <button id="loadMoreBtn">Load More</button>
+        <p id="loading" style="display: none;">Loading...</p>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        const itemsPerPage = 5;  // Number of items per page
+
+        // Load initial content on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadContent(currentPage);
+        });
+
+        // Load more content when "Load More" button is clicked
+        document.getElementById('loadMoreBtn').addEventListener('click', function() {
+            loadContent(currentPage);
+        });
+
+        function loadContent(page) {
+            const apiUrl = `https://jsonplaceholder.typicode.com/posts?_page=${page}&_limit=${itemsPerPage}`; // Example API
+
+            // Display loading message
+            document.getElementById('loading').style.display = 'block';
+
+            // AJAX request to fetch the content
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', apiUrl, true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const data = JSON.parse(xhr.responseText);
+                    appendContent(data);
+
+                    // Hide loading message
+                    document.getElementById('loading').style.display = 'none';
+
+                    // Increment the page number for the next load
+                    currentPage++;
+
+                    // Disable button if no more data
+                    if (data.length < itemsPerPage) {
+                        document.getElementById('loadMoreBtn').style.display = 'none';
+                    }
+                }
+            };
+            xhr.send();
+        }
+
+        function appendContent(data) {
+            const contentList = document.getElementById('contentList');
+
+            // Loop through the data and append each item to the list
+            data.forEach(item => {
+                const div = document.createElement('div');
+                div.classList.add('list-item');
+                div.innerHTML = `
+                    <h3>${item.title}</h3>
+                    <p>${item.body}</p>
+                `;
+                contentList.appendChild(div);
+            });
+        }
+    </script>
+</body>
+</html>

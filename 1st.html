@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Form</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Contact Form</h2>
+    <form id="contactForm">
+        <label for="name">Name:</label><br>
+        <input type="text" id="name" name="name" required>
+        <span class="error" id="nameError"></span><br><br>
+
+        <label for="email">Email:</label><br>
+        <input type="email" id="email" name="email" required>
+        <span class="error" id="emailError"></span><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <script>
+        $(document).ready(function() {
+            $('#contactForm').on('submit', function(event) {
+                // Prevent form submission
+                event.preventDefault();
+
+                // Validate form fields
+                let name = $('#name').val().trim();
+                let email = $('#email').val().trim();
+                let valid = true;
+
+                // Clear previous error messages
+                $('#nameError').text('');
+                $('#emailError').text('');
+
+                // Name validation
+                if (name === '') {
+                    $('#nameError').text('Name is required.');
+                    valid = false;
+                }
+
+                // Email validation
+                if (email === '') {
+                    $('#emailError').text('Email is required.');
+                    valid = false;
+                } else if (!validateEmail(email)) {
+                    $('#emailError').text('Enter a valid email address.');
+                    valid = false;
+                }
+                // If valid, display alert
+                if (valid) {
+                    alert('Name: ' + name + '\nEmail: ' + email);
+                }
+            });
+            // Function to validate email format
+            function validateEmail(email) {
+                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return regex.test(email);
+            }
+        });
+    </script>
+</body>
+</html>

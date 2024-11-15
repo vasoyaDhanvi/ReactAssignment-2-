@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Search with Google Books API</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        #searchContainer {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #bookList {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .book-card {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 10px;
+            padding: 15px;
+            width: 200px;
+            text-align: center;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .book-card img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+        .book-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .book-author {
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="searchContainer">
+        <input type="text" id="searchInput" placeholder="Enter book title or author">
+        <button id="searchBtn">Search Books</button>
+    </div>
+
+    <div id="bookList"></div>
+
+    <script>
+        $(document).ready(function() {
+            $('#searchBtn').click(function() {
+                const query = $('#searchInput').val().trim();
+
+                if (query !== '') {
+                    searchBooks(query);
+                } else {
+                    alert('Please enter a search query.');
+                }
+            });
+
+            function searchBooks(query) {
+                const apiUrl = `https://www.googleapis.com/books/v1/volumes?q=${query}`;
+
+                $.ajax({
+                    url: apiUrl,
+                    method: 'GET',
+                    success: function(response) {
+                        const books = response.items;
+                        $('#bookList').empty(); // Clear previous results
+
+                        if (books && books.length > 0) {
+                            books.forEach(function(book) {
+                                const bookInfo = book.volumeInfo;
+                                const title = bookInfo.title || 'No Title';
+                                const authors = bookInfo.authors ? bookInfo.authors.join(', ') : 'Unknown Author';
+                                const cover = bookInfo.imageLinks ? bookInfo.imageLinks.thumbnail : 'https://via.placeholder.com/200x250?text=No+Cover';
+
+                                // Display each book in a card
+                                $('#bookList').append(`
+                                    <div class="book-card">
+                                        <img src="${cover}" alt="${title}">
+                                        <div class="book-title">${title}</div>
+                                        <div class="book-author">by ${authors}</div>
+                                    </div>
+                                `);
+                            });
+                        } else {
+                            $('#bookList').html('<p>No results found.</p>');
+                        }
+                    },
+                    error: function() {
+                        $('#bookList').html('<p>Failed to retrieve data. Please try again later.</p>');
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

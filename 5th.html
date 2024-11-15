@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Validation</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            color: blue;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+            display: none; /* Hide error by default */
+        }
+        input[type="text"] {
+            padding: 8px;
+            margin-bottom: 10px;
+            width: 200px;
+        }
+        button {
+            padding: 8px 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Form Validation Example</h2>
+    <form id="myForm">
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username"><br>
+        <span class="error" id="usernameError">Username is required.</span><br><br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        $(document).ready(function() {
+            $('#myForm').on('submit', function(event) {
+                event.preventDefault(); // Prevent form submission
+
+                // Clear previous error message
+                $('#usernameError').hide();
+
+                // Get the value of the input field
+                let username = $('#username').val().trim();
+
+                // Check if the input is empty
+                if (username === '') {
+                    $('#usernameError').show(); // Show error message if input is empty
+                } else {
+                    // Submit the form if validation passes (You can add real submission code here)
+                    alert('Form submitted successfully!');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

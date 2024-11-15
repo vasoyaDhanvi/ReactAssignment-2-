@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>State and City Dropdown</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            align-items: center;
+            text-align: center;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            color: blue;
+        }
+        select {
+            padding: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Select State and City</h2>
+    
+    <!-- State Dropdown -->
+    <label for="state">Select State:</label>
+    <br>
+    <select id="state">
+        <option value="">--Select a State--</option>
+        <option value="Gujarat">Gujarat</option>
+        <option value="Maharashtra">Maharashtra</option>
+        <option value="Karnataka">Karnataka</option>
+        <option value="Tamil Nadu">Tamil Nadu</option>
+    </select>
+    <br>
+    <br>
+    <br>
+    <!-- City Dropdown -->
+    <label for="city">Select City:</label>
+    <br>
+    <select id="city">
+        <option value="">--Select a City--</option>
+    </select>
+
+    <script>
+        // Object to hold states and their cities
+        const stateCities = {
+            "Gujarat": ["Ahmedabad", "Surat", "Vadodara", "Rajkot"],
+            "Maharashtra": ["Mumbai", "Pune", "Nagpur", "Nashik"],
+            "Karnataka": ["Bengaluru", "Mysuru", "Hubli", "Mangalore"],
+            "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Tiruchirappalli"]
+        };
+
+        // Get the state and city dropdown elements
+        const stateDropdown = document.getElementById('state');
+        const cityDropdown = document.getElementById('city');
+
+        // Function to update the city dropdown based on the selected state
+        stateDropdown.addEventListener('change', function() {
+            const selectedState = this.value;
+            cityDropdown.innerHTML = '<option value="">--Select a City--</option>'; // Reset city dropdown
+
+            if (selectedState && stateCities[selectedState]) {
+                // Populate cities based on the selected state
+                stateCities[selectedState].forEach(function(city) {
+                    const option = document.createElement('option');
+                    option.value = city;
+                    option.textContent = city;
+                    cityDropdown.appendChild(option);
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

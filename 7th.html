@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Country Autocomplete Search</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+        }
+        #autocompleteResults {
+            border: 1px solid #ddd;
+            width: 300px;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: #fff;
+            position: absolute;
+            z-index: 1000;
+            display: none; /* Initially hidden */
+        }
+        #autocompleteResults div {
+            padding: 10px;
+            cursor: pointer;
+        }
+        #autocompleteResults div:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Country Search</h2>
+    <input type="text" id="searchInput" placeholder="Type country name...">
+    <div id="autocompleteResults"></div>
+
+    <script>
+        $(document).ready(function() {
+            $('#searchInput').on('input', function() {
+                const query = $(this).val().trim();
+
+                // Clear previous results if input is empty
+                if (query === '') {
+                    $('#autocompleteResults').empty().hide();
+                    return;
+                }
+
+                // Make an AJAX request to the REST Countries API
+                const apiUrl = `https://restcountries.com/v3.1/name/${query}`;
+
+                $.ajax({
+                    url: apiUrl,
+                    method: 'GET',
+                    success: function(response) {
+                        $('#autocompleteResults').empty(); // Clear previous results
+
+                        // Check if any results were returned
+                        if (response && response.length > 0) {
+                            response.forEach(function(country) {
+                                // Append each result to the dropdown
+                                $('#autocompleteResults').append(`
+                                    <div data-name="${country.name.common}">
+                                        ${country.name.common} (${country.cca2})
+                                    </div>
+                                `);
+                            });
+                            $('#autocompleteResults').show(); // Show the results
+                        } else {
+                            $('#autocompleteResults').append('<div>No results found.</div>');
+                            $('#autocompleteResults').show(); // Show no results
+                        }
+                    },
+                    error: function() {
+                        $('#autocompleteResults').html('<div>Failed to load suggestions.</div>').show();
+                    }
+                });
+            });
+
+            // When user clicks a suggestion, populate input with the selection
+            $(document).on('click', '#autocompleteResults div', function() {
+                $('#searchInput').val($(this).data('name')); // Set input to selected country name
+                $('#autocompleteResults').empty().hide(); // Clear suggestions and hide dropdown
+            });
+        });
+    </script>
+
+</body>
+</html>

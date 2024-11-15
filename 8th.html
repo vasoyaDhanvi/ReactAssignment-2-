@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .chat-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            max-width: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+        }
+
+        .messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+
+        .message {
+            padding: 8px;
+            margin-bottom: 8px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+
+        .message.user {
+            background-color: #007bff;
+            color: white;
+            align-self: flex-end;
+        }
+
+        .message.bot {
+            background-color: #ddd;
+            align-self: flex-start;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .input-container input {
+            flex-grow: 1;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+        }
+
+        .input-container button {
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        .input-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="messages" id="chatMessages">
+        <!-- Chat messages will appear here -->
+    </div>
+    <div class="input-container">
+        <input type="text" id="messageInput" placeholder="Type a message..." />
+        <button id="sendMessageBtn">Send</button>
+    </div>
+</div>
+
+<script>
+    const chatMessages = document.getElementById('chatMessages');
+    const messageInput = document.getElementById('messageInput');
+    const sendMessageBtn = document.getElementById('sendMessageBtn');
+
+    // Function to display messages on the page
+    function appendMessage(message, sender = 'user') {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', sender);
+        messageDiv.textContent = message;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;  // Scroll to bottom of chat
+    }
+
+    // Function to send the message to the server via AJAX
+    function sendMessage(message) {
+        // AJAX request to send the message to the server
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'sendMessage.php', true);  // URL of your backend server
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                appendMessage(message, 'user');  // Display the user's message
+            }
+        };
+        xhr.send('message=' + encodeURIComponent(message));
+    }
+
+    // Fetch messages every 2 seconds to simulate real-time messaging
+    function fetchMessages() {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'getMessages.php', true);  // URL of your backend server
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                chatMessages.innerHTML = xhr.responseText;  // Display the messages from the server
+                chatMessages.scrollTop = chatMessages.scrollHeight;  // Scroll to the bottom
+            }
+        };
+        xhr.send();
+    }
+
+    // Handle sending message when button is clicked
+    sendMessageBtn.addEventListener('click', function() {
+        const message = messageInput.value.trim();
+        if (message) {
+            sendMessage(message);  // Send the message via AJAX
+            messageInput.value = '';  // Clear the input field
+        }
+    });
+
+    // Handle sending message when pressing "Enter" key
+    messageInput.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            const message = messageInput.value.trim();
+            if (message) {
+                sendMessage(message);  // Send the message via AJAX
+                messageInput.value = '';  // Clear the input field
+            }
+        }
+    });
+
+    // Fetch messages every 2 seconds to simulate real-time chat
+    setInterval(fetchMessages, 2000);
+
+    // Initial fetch of messages on page load
+    fetchMessages();
+</script>
+</body>
+</html>
